@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: ./back/
+      dockerfile: back.Dockerfile
+    ports:
+      - "5001:5000"
+  
+  model:
+    build:
+      context: ./model/
+      dockerfile: model.Dockerfile
+    ports:
+      - "5000:5000"
+  
+  frontend:
+    build:
+      context: ./front/
+      dockerfile: front.Dockerfile
+    ports:
+      - "5002:5000"
