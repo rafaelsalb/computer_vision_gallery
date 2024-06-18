@@ -18,3 +18,7 @@ def classify():
     }, 200)
     res.headers['Access-Control-Allow-Origin'] = 'http://localhost:5001'
     return res
+
+if __name__ = "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
