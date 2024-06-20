@@ -4,7 +4,9 @@ services:
       context: ./back/
       dockerfile: back.Dockerfile
     ports:
-      - "5001:5000"
+      - "5001:5001"
+    networks:
+      - default
   
   model:
     build:
@@ -12,10 +14,27 @@ services:
       dockerfile: model.Dockerfile
     ports:
       - "5000:5000"
+    networks:
+      - default
   
   frontend:
     build:
       context: ./front/
       dockerfile: front.Dockerfile
     ports:
-      - "5002:5000"
+      - "5002:80"
+    networks:
+      - default
+  
+  monitoring:
+    build:
+      context: ./monitoring/
+      dockerfile: prometheus.Dockerfile
+    ports:
+      - "9090:9090"
+    networks:
+      - default
+
+networks:
+  default:
+    driver: host

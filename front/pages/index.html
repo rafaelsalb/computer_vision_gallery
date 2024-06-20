@@ -208,13 +208,13 @@
             const file = new File([blob], "canvas.png", { type: mimeString, lastModified: new Date().getTime() });
 
             // Add file to FormData
-            const formdata = new FormData();
+            let formdata = new FormData();
             formdata.append("image", file);
 
             result.replaceChildren();
 
             try {
-                const response = await fetch("http://localhost:5000/evaluate", {
+                const response = await fetch("http://172.22.85.110:5001/evaluate", {
                     method: "POST",
                     body: formdata
                 });
@@ -222,7 +222,7 @@
                 const json = await response.json();
                 const parsed = JSON.parse(json['result']);
                 const prediction = document.createElement("li");
-                prediction.textContent = "Prediction: " + parsed['name'];
+                prediction.textContent = "Prediction: " + parsed['digit'];
                 const confidence = document.createElement("li");
                 confidence.textContent = "Confidence: " + (parsed['confidence'] * 100).toFixed(2) + "%";
                 result.appendChild(prediction);
