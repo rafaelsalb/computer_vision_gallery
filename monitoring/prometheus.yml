@@ -5,7 +5,7 @@ scrape_configs:
   #   - targets:
   #     - frontend:5002
   - job_name: backend
-    scrape_interval: 1s
+    scrape_interval: 5s
     static_configs:
       - targets: ["backend:5001"]
   - job_name: prometheus

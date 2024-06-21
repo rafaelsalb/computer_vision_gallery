@@ -1,0 +1,58 @@
+<video id='video'></video>
+<canvas id='canvas'></canvas>
+<button id='capture'>Capturar</button>
+<img id="resultImg">
+<ul id="resultList"></ul>
+<script>
+    const result = document.getElementById("resultList");
+    const resultImg = document.getElementById("resultImg");
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
+        const video = document.querySelector('#video');
+        video.srcObject = mediaStream;
+        video.play();
+    });
+
+    document.querySelector('#capture').addEventListener('click', async function (e) {
+        var canvas = document.querySelector("#canvas");
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        var context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0)
+        const canvasDataURL = canvas.toDataURL("image/png");
+        // Convert data URL to Blob
+        const byteString = atob(canvasDataURL.split(',')[1]);
+        const mimeString = canvasDataURL.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        const file = new File([blob], "canvas.png", { type: mimeString, lastModified: new Date().getTime() });
+
+        // Add file to FormData
+        let formdata = new FormData();
+        formdata.append("image", file);
+
+        result.replaceChildren();
+
+        try {
+            const response = await fetch(`http://${window.location.hostname}:5001/evaluate?model=general_purpose`, {
+                method: "POST",
+                body: formdata
+            });
+
+            const json = await response.json();
+            const parsed = JSON.parse(json['result']);
+            const prediction = document.createElement("li");
+            prediction.textContent = "Prediction: " + parsed['digits'][0];
+            const confidence = document.createElement("li");
+            confidence.textContent = "Confidence: " + (parsed['confidences'][0] * 100).toFixed(2) + "%";
+            result.appendChild(prediction);
+            result.appendChild(confidence);
+            resultImg.src = parsed['images'][0]
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    })
+</script>

@@ -1,14 +1,16 @@
-from flask import Flask, send_file
+from flask import Flask, render_template
 import os
-from pathlib import Path
 
-
-BASE_DIR = Path(os.path.abspath(__file__)).resolve().parents[0]
 app = Flask(__name__)
-API_ADDRESS = os.environ["API_ADDRESS"]
+BACKEND_HOST = os.environ["BACKEND_HOST"] if os.environ.get("BACKEND_HOST") else "localhost:5001"
 
-page_path = os.path.join(BASE_DIR, "pages")
+@app.route("/digits", methods=["GET"])
+def digits():
+    return render_template("digits.html")
 
-@app.route("/", methods=["GET"])
-def index():
-    return send_file(os.path.join(page_path, "index.html"), "text/html")
+@app.route("/general_purpose", methods=["GET"])
+def general_purpose():
+    return render_template("webcam.html")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5002)

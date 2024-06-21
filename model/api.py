@@ -1,30 +1,48 @@
-from digits import Model
+from base64 import b64encode
 from flask import Flask, request, make_response
 from json import loads
+from models import DigitClassifier, GeneralPurpose
 from os import environ
 from PIL import Image
 
-model = Model(-1)
+digit_classifier = DigitClassifier()
+general_purpose = GeneralPurpose()
 app = Flask(__name__)
-API_ADDRESS = environ["API_ADDRESS"]
+
+BACKEND_HOST = environ["BACKEND_HOST"] if environ.get("BACKEND_HOST") else "localhost:5001"
+USE_HTTPS = environ["USE_HTTPS"] if environ.get("USE_HTTPS") else False
+
+def target_url(host: str, path: str = ""):
+    global USE_HTTPS
+    return f"{"https" if USE_HTTPS else "http"}://{host}{path}"
 
 @app.route("/classify", methods=["POST"])
 def classify():
     image = request.files['image']
-    print(image)
     image_pil = Image.open(image)
-    print(image)
-    classification = model.evaluate(image_pil)
-    print(classification)
+    classification = digit_classifier.evaluate(image_pil)
     res_classification = loads(classification)
-    print(res_classification)
     res = make_response(
         res_classification,
         200,
     )
-    res.headers['Access-Control-Allow-Origin'] = API_ADDRESS
+    res.headers['Access-Control-Allow-Origin'] = f"*"
     return res
+
+@app.route("/detect", methods=["POST"])
+def detect():
+    image = request.files['image']
+    image_pil = Image.open(image)
+    classification = general_purpose.evaluate(image_pil)
+    res_classification = loads(classification[0])
+    res_classification[0]["image"] = classification[1]
+    res = make_response(
+        res_classification,
+        200,
+    )
+    res.headers['Access-Control-Allow-Origin'] = f"*"
+    return res
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
