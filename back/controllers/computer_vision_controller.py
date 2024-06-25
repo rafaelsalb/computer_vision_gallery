@@ -12,3 +12,11 @@ def evaluate() -> Response:
     res = make_response(result.to_dict(), status_code)
     res.headers['Access-Control-Allow-Origin'] = f"*"
     return res
+
+@computer_vision_bp.route("/evaluate/segment", methods=["POST"])
+def segment() -> Response:
+    evaluate_dto = EvaluateDTO.from_request(request)
+    result, status_code = ComputerVisionService.segment(evaluate_dto)
+    res = make_response(result.to_dict(), status_code)
+    res.headers['Access-Control-Allow-Origin'] = f"*"
+    return res

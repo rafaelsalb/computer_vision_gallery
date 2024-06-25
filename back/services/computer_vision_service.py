@@ -19,3 +19,15 @@ class ComputerVisionService:
         evaluation_result = json.loads(evaluation.content)
         res = EvaluationDTO(evaluation_result)
         return res, 200
+
+    @staticmethod
+    def segment(data: EvaluateDTO) -> Tuple[EvaluationDTO, int]:
+        evaluation = requests.post(
+            f"{Settings().MODEL_HOST}/segment",
+            json = {
+                "image": data.image
+            }
+        )
+        evaluation_result = json.loads(evaluation.content)
+        res = EvaluationDTO(evaluation_result)
+        return res, 200
