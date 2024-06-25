@@ -10,7 +10,7 @@ def digits():
 
 @app.route("/general_purpose", methods=["GET"])
 def general_purpose():
-    return render_template("webcam.html")
+    return render_template("webcam.html", api_host=BACKEND_HOST)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002)

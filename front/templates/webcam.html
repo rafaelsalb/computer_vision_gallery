@@ -4,7 +4,7 @@
 <img id="resultImg">
 <ul id="resultList"></ul>
 <script>
-    const result = document.getElementById("resultList");
+    const resultList = document.getElementById("resultList");
     const resultImg = document.getElementById("resultImg");
     navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
         const video = document.querySelector('#video');
@@ -34,23 +34,25 @@
         let formdata = new FormData();
         formdata.append("image", file);
 
-        result.replaceChildren();
+        resultList.replaceChildren();
 
         try {
-            const response = await fetch(`http://${window.location.hostname}:5001/evaluate?model=general_purpose`, {
+            const response = await fetch(`http://{{ api_host }}/evaluate/detect`, {
                 method: "POST",
                 body: formdata
             });
 
-            const json = await response.json();
-            const parsed = JSON.parse(json['result']);
-            const prediction = document.createElement("li");
-            prediction.textContent = "Prediction: " + parsed['digits'][0];
-            const confidence = document.createElement("li");
-            confidence.textContent = "Confidence: " + (parsed['confidences'][0] * 100).toFixed(2) + "%";
-            result.appendChild(prediction);
-            result.appendChild(confidence);
-            resultImg.src = parsed['images'][0]
+            const res = await response.json();
+            const evaluation = res["result"];
+            for (const result of evaluation) {
+                const predictionResult = document.createElement("li");
+                predictionResult.textContent = "Prediction: " + result['name'];
+                const confidence = document.createElement("li");
+                confidence.textContent = "Confidence: " + (result['confidence'] * 100).toFixed(2) + "%";
+                resultList.appendChild(predictionResult);
+                resultList.appendChild(confidence);
+            }
+            resultImg.src = "data:image/jpg;base64," + res['image'];
         } catch (error) {
             console.error('Error:', error);
         }

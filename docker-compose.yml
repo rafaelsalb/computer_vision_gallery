@@ -4,44 +4,32 @@ services:
       context: ./back/
       dockerfile: back.Dockerfile
     ports:
-      - "5001:5001"
-    networks:
-      - default
+      - "0.0.0.0:5001:5001"
     environment:
       - FRONTEND_HOST=${FRONTEND_HOST}
       - MODEL_HOST=${MODEL_HOST}
-  
+
   model:
     build:
       context: ./model/
       dockerfile: model.Dockerfile
     ports:
-      - "5000:5000"
-    networks:
-      - default
+      - "0.0.0.0:5000:5000"
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
-  
+
   frontend:
     build:
       context: ./front/
       dockerfile: front.Dockerfile
     ports:
-      - "5002:5002"
-    networks:
-      - default
+      - "0.0.0.0:5002:5002"
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
-  
+
   monitoring:
     build:
       context: ./monitoring/
       dockerfile: prometheus.Dockerfile
     ports:
       - "9090:9090"
-    networks:
-      - default
-
-networks:
-  default:
-    driver: host

@@ -1,9 +1,9 @@
-from base64 import b64encode
 from flask import Flask, request, make_response
 from json import loads
 from models import DigitClassifier, GeneralPurpose
 from os import environ
 from PIL import Image
+from controllers.detection_controller import object_detection_controller
 
 digit_classifier = DigitClassifier()
 general_purpose = GeneralPurpose()
@@ -11,6 +11,8 @@ app = Flask(__name__)
 
 BACKEND_HOST = environ["BACKEND_HOST"] if environ.get("BACKEND_HOST") else "localhost:5001"
 USE_HTTPS = environ["USE_HTTPS"] if environ.get("USE_HTTPS") else False
+
+app.register_blueprint(object_detection_controller)
 
 def target_url(host: str, path: str = ""):
     global USE_HTTPS
@@ -22,20 +24,6 @@ def classify():
     image_pil = Image.open(image)
     classification = digit_classifier.evaluate(image_pil)
     res_classification = loads(classification)
-    res = make_response(
-        res_classification,
-        200,
-    )
-    res.headers['Access-Control-Allow-Origin'] = f"*"
-    return res
-
-@app.route("/detect", methods=["POST"])
-def detect():
-    image = request.files['image']
-    image_pil = Image.open(image)
-    classification = general_purpose.evaluate(image_pil)
-    res_classification = loads(classification[0])
-    res_classification[0]["image"] = classification[1]
     res = make_response(
         res_classification,
         200,
