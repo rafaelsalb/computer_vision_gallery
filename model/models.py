@@ -29,7 +29,7 @@ class GeneralPurpose(Model):
 
     def evaluate(self, image: Image.Image) -> Tuple[str, str]:
         res = self.model(image) # type: ignore
-        annotated_image = Image.fromarray(res[0].plot()).convert("RGB")
+        annotated_image = Image.fromarray(res[0].plot()) # .convert("RGB")
         im = BytesIO()
         annotated_image.save(im, format="JPEG")
         img_str = b64encode(im.getvalue()).decode('utf-8')
@@ -41,7 +41,7 @@ class Segmentation(Model):
 
     def evaluate(self, image: Image.Image) -> Tuple[str, str]:
         res = self.model(image) # type: ignore
-        annotated_image = Image.fromarray(res[0].plot()).convert("RGB")
+        annotated_image = Image.fromarray(res[0].plot()) # .convert("RGB")
         im = BytesIO()
         annotated_image.save(im, format="JPEG")
         img_str = b64encode(im.getvalue()).decode('utf-8')

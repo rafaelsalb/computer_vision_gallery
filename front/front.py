@@ -17,4 +17,4 @@ def segment():
     return render_template("segment_webcam.html", api_host=BACKEND_HOST)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5002)
+    app.run(host="0.0.0.0", port=5003)

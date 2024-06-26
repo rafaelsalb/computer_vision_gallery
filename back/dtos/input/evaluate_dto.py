@@ -12,9 +12,11 @@ class EvaluateDTO:
     @staticmethod
     def from_request(request: Request):
         image = Image.open(request.files.get("image")).convert("RGB")
+        b, g, r = image.split()
+        image = Image.merge("RGB", (r, g, b))
         image_bin = BytesIO()
         image.save(image_bin, format="JPEG")
         image_b64 = b64encode(image_bin.getvalue()).decode("utf-8")
 
         model = request.args.get("model")
-        return EvaluateDTO(image_b64, model)
+        return EvaluateDTO(image_b64, model) # type: ignore

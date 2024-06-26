@@ -23,9 +23,16 @@ services:
       context: ./front/
       dockerfile: front.Dockerfile
     ports:
-      - "0.0.0.0:5002:5002"
+      - "0.0.0.0:5003:5003"
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
+
+  reverse_proxy:
+    build:
+      context: ./reverse_proxy/
+      dockerfile: reverse_proxy.Dockerfile
+    ports:
+      - "0.0.0.0:5002:4443"
 
   monitoring:
     build:

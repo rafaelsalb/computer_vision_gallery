@@ -1,5 +1,5 @@
 <video id='video'></video>
-<canvas id='canvas'></canvas>
+<canvas id='canvas' hidden></canvas>
 <button id='capture'>Capturar</button>
 <img id="resultImg">
 <ul id="resultList"></ul>
@@ -37,7 +37,7 @@
         resultList.replaceChildren();
 
         try {
-            const response = await fetch(`http://{{ api_host }}/evaluate/segment`, {
+            const response = await fetch(`https://{{ api_host }}/evaluate/segment`, {
                 method: "POST",
                 body: formdata
             });

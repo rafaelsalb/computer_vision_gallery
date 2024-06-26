@@ -14,7 +14,8 @@ class ComputerVisionService:
             f"{Settings().MODEL_HOST}/detect",
             json = {
                 "image": data.image
-            }
+            },
+            verify = False
         )
         evaluation_result = json.loads(evaluation.content)
         res = EvaluationDTO(evaluation_result)
@@ -26,7 +27,8 @@ class ComputerVisionService:
             f"{Settings().MODEL_HOST}/segment",
             json = {
                 "image": data.image
-            }
+            },
+            verify = False
         )
         evaluation_result = json.loads(evaluation.content)
         res = EvaluationDTO(evaluation_result)

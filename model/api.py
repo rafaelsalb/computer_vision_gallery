@@ -11,8 +11,8 @@ app = Flask(__name__)
 BACKEND_HOST = environ["BACKEND_HOST"] if environ.get("BACKEND_HOST") else "localhost:5001"
 USE_HTTPS = environ["USE_HTTPS"] if environ.get("USE_HTTPS") else False
 
-app.register_blueprint(object_detection_controller)
-app.register_blueprint(segmentation_controller)
+app.register_blueprint(object_detection_controller, url_prefix="/model")
+app.register_blueprint(segmentation_controller, url_prefix="/model")
 
 # @app.route("/classify", methods=["POST"])
 # def classify():
