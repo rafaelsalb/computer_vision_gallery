@@ -1,0 +1,50 @@
+<button onclick="connectWebSocket()">Conectar</button>
+<video id='video'></video>
+<canvas id='canvas' hidden></canvas>
+<img id="resultImg">
+<ul id="resultList"></ul>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script>
+    const resultList = document.getElementById("resultList");
+    const resultImg = document.getElementById("resultImg");
+
+    let bufferSize = 0;
+
+    {% if use_https %}
+    const ws = new io("https://{{ model_host }}", {
+    {% else %}
+    const ws = new io("http://{{ model_host }}", {
+    {% endif %}
+            transports: ["websocket", "polling"],
+            path: "/model/socket.io/",
+            autoConnect: false
+    });
+    ws.on("message", (message) => {
+        resultImg.src = "data:image/jpeg;base64," + message;
+    });
+
+    function connectWebSocket() {
+        ws.connect();
+        startStreaming(ws);
+    }
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function (mediaStream) {
+        const video = document.querySelector('#video');
+        video.srcObject = mediaStream;
+        video.play();
+    });
+
+    function startStreaming(ws) {
+        let canvas = document.querySelector("#canvas");
+        let sendFrame = setInterval(
+            () => {
+                canvas.height = video.videoHeight;
+                canvas.width = video.videoWidth;
+                var context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0);
+                let image = canvas.toDataURL("image/jpeg").split(",")[1];
+                ws.emit("frame", image);
+            },
+            1000 / 2
+        );
+    }
+</script>

@@ -1,6 +1,6 @@
 server {
 		listen 4443 ssl;
-		server_name 172.22.85.155;
+		server_name ${NG_SERVER_NAME};
 
 		ssl_certificate /etc/nginx/ssl/cert.pem;
 		ssl_certificate_key /etc/nginx/ssl/key.pem;
@@ -9,7 +9,7 @@ server {
 		ssl_ciphers HIGH:!aNULL:!MD5;
 
 		location / {
-				proxy_pass http://172.22.85.155:5003;
+				proxy_pass ${NG_FRONTEND_HOST};
 				proxy_set_header Host $host;
 				proxy_set_header X-Real-IP $remote_addr;
 				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -17,7 +17,7 @@ server {
 		}
 
 		location /api {
-				proxy_pass http://172.22.85.155:5001;
+				proxy_pass ${NG_BACKEND_HOST};
 				proxy_set_header Host $host;
 				proxy_set_header X-Real-IP $remote_addr;
 				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -25,7 +25,7 @@ server {
 		}
 
 		location /model {
-				proxy_pass http://172.22.85.155:5000;
+				proxy_pass ${NG_MODEL_HOST};
 				proxy_set_header Host $host;
 				proxy_set_header X-Real-IP $remote_addr;
 				proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -41,6 +41,6 @@ server {
 				proxy_buffering off;
 				proxy_set_header Upgrade $http_upgrade;
 				proxy_set_header Connection "Upgrade";
-				proxy_pass http://172.22.85.155:5000/socket.io;
+				proxy_pass ${NG_MODEL_HOST}/socket.io;
 		}
 }
