@@ -26,6 +26,7 @@ services:
       - "0.0.0.0:5003:5003"
     environment:
       - BACKEND_HOST=${BACKEND_HOST}
+      - MODEL_HOST=${MODEL_HOST}
 
   reverse_proxy:
     build:
@@ -33,6 +34,12 @@ services:
       dockerfile: reverse_proxy.Dockerfile
     ports:
       - "0.0.0.0:5002:4443"
+    environment:
+      - NG_SERVER_NAME=${NG_SERVER_NAME}
+      - NG_FRONTEND_HOST=${NG_FRONTEND_HOST}
+      - NG_BACKEND_HOST=${NG_BACKEND_HOST}
+      - NG_MODEL_HOST=${NG_MODEL_HOST}
+        #    command: /bin/sh -c "envsubst '${NG_SERVER_NAME} ${NG_FRONTEND_HOST} ${NG_BACKEND_HOST} ${NG_MODEL_HOST}' < /etc/nginx/conf.d/computer_vision_gallery.conf.template > /home/a && nginx -g 'daemon off;'"
 
   monitoring:
     build:

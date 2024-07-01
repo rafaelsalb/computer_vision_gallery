@@ -1,5 +1,6 @@
 from typing import Tuple
 from ultralytics import YOLO
+from ultralytics.engine.results import Results
 import os
 from pathlib import Path
 from PIL import Image
@@ -27,23 +28,22 @@ class GeneralPurpose(Model):
     def __init__(self):
         super().__init__("general_purpose")
 
-    def evaluate(self, image: Image.Image) -> Tuple[str, str]:
+    def evaluate(self, image: Image.Image) -> Tuple[Results, str]:
         res = self.model(image) # type: ignore
         annotated_image = Image.fromarray(res[0].plot()) # .convert("RGB")
         im = BytesIO()
         annotated_image.save(im, format="JPEG")
         img_str = b64encode(im.getvalue()).decode('utf-8')
-        return (res[0].tojson(), img_str)
+        return res[0], img_str
 
 class Segmentation(Model):
     def __init__(self):
         super().__init__("yolov8n-seg")
 
-    def evaluate(self, image: Image.Image) -> Tuple[str, str]:
+    def evaluate(self, image: Image.Image) -> Tuple[Results, str]:
         res = self.model(image) # type: ignore
         annotated_image = Image.fromarray(res[0].plot()) # .convert("RGB")
         im = BytesIO()
         annotated_image.save(im, format="JPEG")
         img_str = b64encode(im.getvalue()).decode('utf-8')
-        return (res[0].tojson(), img_str)
-
+        return res[0], img_str
